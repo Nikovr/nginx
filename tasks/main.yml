@@ -1,0 +1,32 @@
+---
+# tasks file for nginx
+
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+  become: true
+
+- name: Configure Nginx sites
+  template:
+    src: nginx.conf.j2
+    dest: "/etc/nginx/sites-available/{{ item.server_name }}"
+  with_items: "{{ nginx_sites }}"
+  notify:
+    - Reload Nginx
+
+- name: Enable Nginx sites
+  file:
+    src: "/etc/nginx/sites-available/{{ item.server_name }}"
+    dest: "/etc/nginx/sites-enabled/{{ item.server_name }}"
+    state: link
+  with_items: "{{ nginx_sites }}"
+  notify:
+    - Reload Nginx
+
+- name: Start Nginx service
+  service:
+    name: nginx
+    state: started
+    enabled: true
+  become: true

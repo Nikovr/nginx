@@ -1,0 +1,9 @@
+---
+# defaults file for nginx
+
+nginx_sites:
+  - server_name: django-app
+    listen: 80
+    location:
+      - path: /
+        proxy_pass: "http://127.0.0.1:8000"
